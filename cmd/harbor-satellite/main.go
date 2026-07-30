@@ -11,10 +11,10 @@ import (
 
 	"github.com/container-registry/harbor-satellite/internal/crypto"
 	"github.com/container-registry/harbor-satellite/internal/env"
-	eventscheduler "github.com/container-registry/harbor-satellite/internal/event-scheduler"
 	"github.com/container-registry/harbor-satellite/internal/logger"
 	"github.com/container-registry/harbor-satellite/internal/satellite"
 	runtime "github.com/container-registry/harbor-satellite/internal/satellite/container_runtime"
+	eventscheduler "github.com/container-registry/harbor-satellite/internal/satellite/event-scheduler"
 	"github.com/container-registry/harbor-satellite/internal/satellite/hotreload"
 	"github.com/container-registry/harbor-satellite/internal/satellite/parsec"
 	"github.com/container-registry/harbor-satellite/internal/satellite/registry"
