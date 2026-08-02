@@ -30,7 +30,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Auth
 	api.HandleFunc("/logout", s.logoutHandler).Methods("POST")
-	api.HandleFunc("/refresh", s.refreshCredentialsHandler).Methods("POST")
 
 	// Users
 	api.HandleFunc("/users", s.listUsersHandler).Methods("GET")
@@ -87,11 +86,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	spiffeZtr.HandleFunc("", s.spiffeZtrHandler).Methods("GET")
 
 	// Sync (dual auth: robot credentials or SPIFFE)
-	syncRouter := satellites.PathPrefix("/sync").Subrouter()
-	syncRouter.Use(middleware.RateLimitMiddleware(s.rateLimiter))
-	syncRouter.Use(spiffe.AuthMiddleware)
-	syncRouter.Use(s.SatelliteAuthMiddleware)
-	syncRouter.HandleFunc("", s.syncHandler).Methods("POST")
+	satEndpoints := r.PathPrefix("/sat").Subrouter()
+	satEndpoints.Use(middleware.RateLimitMiddleware(s.rateLimiter))
+	satEndpoints.Use(spiffe.AuthMiddleware)
+	satEndpoints.Use(s.SatelliteAuthMiddleware)
+
+	satEndpoints.HandleFunc("/sync", s.syncHandler).Methods("POST")
+	satEndpoints.HandleFunc("/refresh", s.refreshCredentialsHandler).Methods("POST")
+
+	PrintRoutes(r)
 
 	return r
 }
