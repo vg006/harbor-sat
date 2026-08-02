@@ -94,7 +94,5 @@ func (s *Server) RegisterRoutes() http.Handler {
 	satEndpoints.HandleFunc("/sync", s.syncHandler).Methods("POST")
 	satEndpoints.HandleFunc("/refresh", s.refreshCredentialsHandler).Methods("POST")
 
-	PrintRoutes(r)
-
 	return r
 }

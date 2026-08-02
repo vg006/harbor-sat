@@ -699,7 +699,7 @@ func (s *Server) syncHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if robotAcc.RobotExpiry.Valid {
-		duration, err := time.ParseDuration(strings.TrimPrefix("@every ", normalizedInterval))
+		duration, err := time.ParseDuration(strings.TrimPrefix(normalizedInterval, "@every "))
 		if err != nil {
 			log.Printf("Invalid heartbeat interval %q: %v", req.StateReportInterval, err)
 			HandleAppError(w, &AppError{Message: "invalid heartbeat interval format", Code: http.StatusBadRequest})
@@ -708,8 +708,8 @@ func (s *Server) syncHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Basically checks whether the robot expires before the 2nd state sync from now
 		// or not
-		future := time.Now().Add(duration * 2)
-		if future.Before(robotAcc.RobotExpiry.Time) {
+		future := time.Now().Add(duration).Add(duration)
+		if robotAcc.RobotExpiry.Time.Before(future) {
 			resp.Events = append(resp.Events, "refresh_credentials")
 		}
 	}
